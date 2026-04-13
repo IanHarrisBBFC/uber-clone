@@ -6,13 +6,28 @@ export default function RideSelector({ pickup, dropoff }) {
     const [rideDuration, setRideDuration] = useState(0);
 
     useEffect(() => {
-        fetch(`https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};,${dropoff[0]},${dropoff[1]}
-            ?access_token=pk.eyJ1IjoiaWFuMDM4IiwiYSI6ImNrejRkdWVscDBmZzgyb28yOGVjazFkaWMifQ.rpr-o9cBKiJ2PGh8K8VzXA`)
-          .then(res => res.json()).then(data => {
-            console.log(data)
-            setRideDuration(data.routes[0].duration /60 / 100);
-          });
-    }, [pickup,dropoff]);
+        // Only fetch if we have valid coordinates
+        const hasValidPickup = pickup && pickup.length === 2 && pickup[0] !== 0 && pickup[1] !== 0;
+        const hasValidDropoff = dropoff && dropoff.length === 2 && dropoff[0] !== 0 && dropoff[1] !== 0;
+        
+        if (!hasValidPickup || !hasValidDropoff) return;
+
+        const fetchDirections = async () => {
+            try {
+                const response = await fetch(
+                    `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+                );
+                const data = await response.json();
+                if (data.routes && data.routes.length > 0) {
+                    setRideDuration(data.routes[0].duration / 60 / 100);
+                }
+            } catch (error) {
+                console.error("Error fetching directions:", error);
+            }
+        };
+
+        fetchDirections();
+    }, [pickup, dropoff]);
 
     return (
         <Wrapper>

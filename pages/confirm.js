@@ -15,9 +15,6 @@ export default function Confirm() {
   const getCoordinates = async (location, setCoordinates) => {
     if (!location) return;
 
-    console.log("[v0] Fetching coordinates for:", location);
-    console.log("[v0] Mapbox token available:", !!process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN);
-
     try {
       const response = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(location)}.json?` +
@@ -27,15 +24,11 @@ export default function Confirm() {
           })
       );
       const data = await response.json();
-      console.log("[v0] Geocoding response:", data);
       if (data.features && data.features.length > 0) {
-        console.log("[v0] Found coordinates:", data.features[0].center);
         setCoordinates(data.features[0].center);
-      } else {
-        console.error("[v0] No coordinates found for:", location);
       }
     } catch (error) {
-      console.error("[v0] Error fetching coordinates:", error);
+      console.error("Error fetching coordinates:", error);
     }
   };
 
