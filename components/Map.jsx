@@ -6,6 +6,8 @@ mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 export default function Map({ pickup, dropoff }) {
     useEffect(() => {
+		console.log("[v0] Map rendering with pickup:", pickup, "dropoff:", dropoff);
+		
 		const map = new mapboxgl.Map({
 			container: "map",
 			style: "mapbox://styles/mapbox/streets-v12",
@@ -13,24 +15,30 @@ export default function Map({ pickup, dropoff }) {
 			zoom: 3
 		});
 
-		if (pickup.length != 0) {
-			addCoordinates(map, pickup);
+		const addMarker = (coordinates) => {
+			new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+		};
+
+		// Check if pickup has valid coordinates (not [0,0])
+		const hasValidPickup = pickup && pickup[0] !== 0 && pickup[1] !== 0;
+		const hasValidDropoff = dropoff && dropoff[0] !== 0 && dropoff[1] !== 0;
+
+		if (hasValidPickup) {
+			addMarker(pickup);
 		}
 
-		if (dropoff.length != 0) {
-			addCoordinates(map, dropoff);
+		if (hasValidDropoff) {
+			addMarker(dropoff);
 		}
 
-		if (pickup.length != 0 && dropoff.length != 0) {
+		if (hasValidPickup && hasValidDropoff) {
 			map.fitBounds([pickup, dropoff], {
 				padding: 60
 			});
 		}
-	}, []);
 
-	const addCoordinates = (map, coordinates) => {
-		const marker1 = new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-	};
+		return () => map.remove();
+	}, [pickup, dropoff]);
 
     return <Wrapper id="map"></Wrapper>;
 }
