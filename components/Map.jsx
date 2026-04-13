@@ -1,45 +1,58 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
-import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-
 export default function Map({ pickup, dropoff }) {
+    const [mapLoaded, setMapLoaded] = useState(false);
+
     useEffect(() => {
-		console.log("[v0] Map rendering with pickup:", pickup, "dropoff:", dropoff);
-		
-		const map = new mapboxgl.Map({
-			container: "map",
-			style: "mapbox://styles/mapbox/streets-v12",
-			center: [75.8366318, 25.1389012],
-			zoom: 3
-		});
+        // Only run on client side
+        if (typeof window === "undefined") return;
 
-		const addMarker = (coordinates) => {
-			new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
-		};
+        let map;
+        
+        const initMap = async () => {
+            const mapboxgl = (await import("mapbox-gl")).default;
+            mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
-		// Check if pickup has valid coordinates (not [0,0])
-		const hasValidPickup = pickup && pickup[0] !== 0 && pickup[1] !== 0;
-		const hasValidDropoff = dropoff && dropoff[0] !== 0 && dropoff[1] !== 0;
+            map = new mapboxgl.Map({
+                container: "map",
+                style: "mapbox://styles/mapbox/streets-v12",
+                center: [75.8366318, 25.1389012],
+                zoom: 3
+            });
 
-		if (hasValidPickup) {
-			addMarker(pickup);
-		}
+            setMapLoaded(true);
 
-		if (hasValidDropoff) {
-			addMarker(dropoff);
-		}
+            const addMarker = (coordinates) => {
+                new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
+            };
 
-		if (hasValidPickup && hasValidDropoff) {
-			map.fitBounds([pickup, dropoff], {
-				padding: 60
-			});
-		}
+            // Check if pickup has valid coordinates (not [0,0] and not empty)
+            const hasValidPickup = pickup && pickup.length === 2 && pickup[0] !== 0 && pickup[1] !== 0;
+            const hasValidDropoff = dropoff && dropoff.length === 2 && dropoff[0] !== 0 && dropoff[1] !== 0;
 
-		return () => map.remove();
-	}, [pickup, dropoff]);
+            if (hasValidPickup) {
+                addMarker(pickup);
+            }
+
+            if (hasValidDropoff) {
+                addMarker(dropoff);
+            }
+
+            if (hasValidPickup && hasValidDropoff) {
+                map.fitBounds([pickup, dropoff], {
+                    padding: 60
+                });
+            }
+        };
+
+        initMap();
+
+        return () => {
+            if (map) map.remove();
+        };
+    }, [pickup, dropoff]);
 
     return <Wrapper id="map"></Wrapper>;
 }
