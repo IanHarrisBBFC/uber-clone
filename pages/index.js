@@ -369,7 +369,7 @@ export default function Home() {
             alt="CabnFly"
             className="h-16 mx-auto mb-4"
           />
-          <p className="text-gray-300">Your Premier Airport Transfer Service</p>
+          <p className="text-white">Your Premier Airport Transfer Service</p>
           <p className="text-sm text-gray-400 mt-4">CabnFly - All Rights Reserved</p>
         </div>
       </footer>

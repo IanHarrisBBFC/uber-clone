@@ -42,7 +42,7 @@ export default function Login() {
             className="h-20 lg:h-32 mb-4"
           />
           <h1 className="text-3xl lg:text-5xl font-bold mb-2 drop-shadow-lg">CabnFly</h1>
-          <p className="text-lg lg:text-xl text-gray-200">Your Premier Airport Transfer Service</p>
+          <p className="text-lg lg:text-xl text-white">Your Premier Airport Transfer Service</p>
         </div>
       </div>
 
