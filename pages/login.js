@@ -19,10 +19,12 @@ export default function Login() {
 
   const handleSignIn = async () => {
     try {
+      console.log("[v0] Starting Google sign-in...");
       await signInWithPopup(auth, googleProvider);
+      console.log("[v0] Sign-in successful");
     } catch (error) {
-      console.error("Login failed:", error.message);
-      alert("Failed to sign in. Please try again.");
+      console.error("[v0] Login failed:", error.code, error.message);
+      alert(`Sign-in error: ${error.code}\n\n${error.message}`);
     }
   };
 
