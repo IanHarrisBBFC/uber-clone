@@ -1,62 +1,114 @@
+/* CabnFly Airport Transfers - Premium Branding */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Font */
+@font-face {
+  font-family: 'CabnFly';
+  src: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0kInm7nUamzY-6XWrlluO6Zf97uQSjCfl1KVETIToxz.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  /* Primary Colors */
+  --primary-black: #111111;
+  --primary-dark: #1A1A1A;
+  --primary-yellow: #FFD700;
+  --primary-gold: #DAA520;
+  
+  /* Neutral Colors */
+  --white: #FFFFFF;
+  --off-white: #F5F5F5;
+  --light-gray: #E5E5E5;
+  --medium-gray: #6C757D;
+  --dark-gray: #333333;
+  --charcoal: #222222;
+}
+
 /* Reset Default Styles */
 html, body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen,
     Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  background-color: #f8f9fa; /* Light gray background */
-  color: #333; /* Dark text for readability */
+  background-color: var(--off-white);
+  color: var(--dark-gray);
   line-height: 1.6;
-  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
-/* Improve link styles */
 a {
-  color: #0070f3; /* Default blue color */
+  color: var(--primary-yellow);
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 a:hover {
-  color: #0056b3; /* Darker blue on hover */
-  text-decoration: underline;
+  color: var(--primary-gold);
 }
 
-/* Global Box Sizing */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #121212;
-    color: #f5f5f5;
-  }
-
-  a {
-    color: #0a84ff;
-  }
-
-  a:hover {
-    color: #66aaff;
-  }
-}
-
-/* Accessibility Improvements */
 *:focus {
-  outline: 2px solid #0070f3;
+  outline: 2px solid var(--primary-yellow);
   outline-offset: 2px;
 }
 
-/* Responsive Typography */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.2;
+  color: var(--primary-black);
 }
 
 p {
   margin-bottom: 1rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-black);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-yellow);
+  color: var(--primary-black);
+}
+
+.btn-gold {
+  background-color: var(--primary-yellow);
+  color: var(--primary-black);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: var(--primary-gold);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, var(--primary-black) 0%, var(--charcoal) 100%);
+}
+
+.premium-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
 }
