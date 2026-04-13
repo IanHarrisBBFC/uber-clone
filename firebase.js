@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -11,8 +11,9 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
+// Check if Firebase app is already initialized to prevent duplicate app error
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const googleProvider = new GoogleAuthProvider();
-const auth = getAuth()
+const auth = getAuth(app)
 
 export { app, googleProvider, auth }
