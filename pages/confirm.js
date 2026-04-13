@@ -26,8 +26,6 @@ export default function Confirm() {
       const data = await response.json();
       if (data.features && data.features.length > 0) {
         setCoordinates(data.features[0].center);
-      } else {
-        console.error("No coordinates found for:", location);
       }
     } catch (error) {
       console.error("Error fetching coordinates:", error);

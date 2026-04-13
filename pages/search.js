@@ -1,17 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import tw from "tailwind-styled-components";
 import Link from "next/link";
 
 export default function Search() {
   const [pickup, setPickup] = useState("");
   const [dropoff, setDropoff] = useState("");
+  const [pickupSuggestions, setPickupSuggestions] = useState([]);
+  const [dropoffSuggestions, setDropoffSuggestions] = useState([]);
+  const [activeField, setActiveField] = useState(null);
+
+  const searchPlaces = useCallback(async (query, setSuggestions) => {
+    if (!query || query.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+          new URLSearchParams({
+            access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
+            limit: 5,
+            types: "place,address,poi",
+          })
+      );
+      const data = await response.json();
+      if (data.features) {
+        setSuggestions(data.features.map(f => f.place_name));
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (activeField === "pickup") {
+        searchPlaces(pickup, setPickupSuggestions);
+      }
+    }, 300);
+    return () => clearTimeout(debounce);
+  }, [pickup, activeField, searchPlaces]);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (activeField === "dropoff") {
+        searchPlaces(dropoff, setDropoffSuggestions);
+      }
+    }, 300);
+    return () => clearTimeout(debounce);
+  }, [dropoff, activeField, searchPlaces]);
 
   const handleConfirm = (e) => {
-    e.preventDefault(); // Prevents default form submission behavior
+    e.preventDefault();
     if (!pickup.trim() || !dropoff.trim()) {
       alert("Please enter both pickup and dropoff locations.");
       return;
     }
+  };
+
+  const selectSuggestion = (value, field) => {
+    if (field === "pickup") {
+      setPickup(value);
+      setPickupSuggestions([]);
+    } else {
+      setDropoff(value);
+      setDropoffSuggestions([]);
+    }
+    setActiveField(null);
   };
 
   return (
@@ -42,16 +98,46 @@ export default function Search() {
         </FromToIcons>
 
         <InputBoxes>
-          <Input
-            placeholder="Enter pickup location"
-            value={pickup}
-            onChange={(e) => setPickup(e.target.value)}
-          />
-          <Input
-            placeholder="Where to?"
-            value={dropoff}
-            onChange={(e) => setDropoff(e.target.value)}
-          />
+          <InputWrapper>
+            <Input
+              placeholder="Enter pickup location"
+              value={pickup}
+              onChange={(e) => setPickup(e.target.value)}
+              onFocus={() => setActiveField("pickup")}
+            />
+            {pickupSuggestions.length > 0 && (
+              <SuggestionsList>
+                {pickupSuggestions.map((suggestion, index) => (
+                  <SuggestionItem
+                    key={index}
+                    onClick={() => selectSuggestion(suggestion, "pickup")}
+                  >
+                    {suggestion}
+                  </SuggestionItem>
+                ))}
+              </SuggestionsList>
+            )}
+          </InputWrapper>
+          <InputWrapper>
+            <Input
+              placeholder="Where to?"
+              value={dropoff}
+              onChange={(e) => setDropoff(e.target.value)}
+              onFocus={() => setActiveField("dropoff")}
+            />
+            {dropoffSuggestions.length > 0 && (
+              <SuggestionsList>
+                {dropoffSuggestions.map((suggestion, index) => (
+                  <SuggestionItem
+                    key={index}
+                    onClick={() => selectSuggestion(suggestion, "dropoff")}
+                  >
+                    {suggestion}
+                  </SuggestionItem>
+                ))}
+              </SuggestionsList>
+            )}
+          </InputWrapper>
         </InputBoxes>
         <PlusIcon
           src="https://img.icons8.com/ios/50/000000/plus-math.png"
@@ -119,8 +205,20 @@ const InputBoxes = tw.div`
   flex flex-col flex-1
 `;
 
+const InputWrapper = tw.div`
+  relative
+`;
+
 const Input = tw.input`
-  h-10 bg-gray-200 my-2 rounded-lg px-3 outline-none border-none focus:ring-2 focus:ring-gray-400
+  h-10 bg-gray-200 my-2 rounded-lg px-3 outline-none border-none focus:ring-2 focus:ring-gray-400 w-full
+`;
+
+const SuggestionsList = tw.div`
+  absolute top-full left-0 right-0 bg-white shadow-lg rounded-lg z-20 max-h-48 overflow-y-auto
+`;
+
+const SuggestionItem = tw.div`
+  px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm border-b border-gray-100 last:border-b-0
 `;
 
 const PlusIcon = tw.img`
