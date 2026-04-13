@@ -1,12 +1,45 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import tw from "tailwind-styled-components";
 import { useRouter } from "next/router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 
+const UK_AIRPORTS = [
+  { code: "BHX", name: "Birmingham Airport" },
+  { code: "LHR", name: "London Heathrow Airport" },
+  { code: "LGW", name: "London Gatwick Airport" },
+  { code: "MAN", name: "Manchester Airport" },
+  { code: "GLA", name: "Glasgow Airport" },
+  { code: "EDI", name: "Edinburgh Airport" },
+  { code: "BRS", name: "Bristol Airport" },
+  { code: "NCL", name: "Newcastle Airport" },
+  { code: "LPL", name: "Liverpool John Lennon Airport" },
+  { code: "STN", name: "London Stansted Airport" },
+  { code: "LTN", name: "London Luton Airport" },
+  { code: "LCY", name: "London City Airport" },
+  { code: "EMA", name: "East Midlands Airport" },
+  { code: "LBA", name: "Leeds Bradford Airport" },
+];
+
+const TIME_OPTIONS = [];
+for (let h = 0; h < 24; h++) {
+  for (let m = 0; m < 60; m += 5) {
+    const hour = h % 12 || 12;
+    const period = h < 12 ? "AM" : "PM";
+    const time = `${hour.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")} ${period}`;
+    TIME_OPTIONS.push(time);
+  }
+}
+
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [formTab, setFormTab] = useState("quick");
+  const [selectedAirport, setSelectedAirport] = useState("");
+  const [collectionDate, setCollectionDate] = useState("");
+  const [collectionTime, setCollectionTime] = useState("");
+  const [pickup, setPickup] = useState("");
+  const [passengers, setPassengers] = useState("1");
+  const [luggage, setLuggage] = useState("1");
   const router = useRouter();
 
   useEffect(() => {
@@ -21,304 +54,326 @@ export default function Home() {
         router.push("/login");
       }
     });
-
     return () => unsubscribe();
   }, [router]);
 
+  const handleGetQuote = () => {
+    if (!selectedAirport || !collectionDate || !collectionTime) {
+      alert("Please fill in all required fields");
+      return;
+    }
+    router.push({
+      pathname: "/confirm",
+      query: {
+        pickup: pickup || selectedAirport,
+        dropoff: selectedAirport,
+        date: collectionDate,
+        time: collectionTime,
+        passengers,
+        luggage,
+      },
+    });
+  };
+
   const airports = [
-    { name: "Heathrow", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Q96qtXU1n4cT-ENL1LcTHyKC5GlCpBg6zwJAqPk7IL8.jpg" },
-    { name: "Manchester", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NKYFoNLN3fLl-PmEk8YESq8DqB2Nz8hp3aNbW5Ky0a4.jpg" },
-    { name: "Birmingham", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/SJmc8syhToSd-40AgOmgAYXd0fHIhQH34eARJXnAW0p.jpg" },
-    { name: "Gatwick", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/rpBfpoRLxwlS-WUIYEd1fZT4f2VbAstXzdCEWmxCHcp.jpg" },
+    { name: "Birmingham Airport", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/SJmc8syhToSd-40AgOmgAYXd0fHIhQH34eARJXnAW0p.jpg", desc: "One of the UK's busiest airports, connecting passengers to domestic and international destinations." },
+    { name: "Heathrow Airport", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MfPAOfarF9VV-qj6ZgFxyU4GliYT8463V1uKPJ5bEL3.jpg", desc: "One of the world's busiest international airports, a key transit point for global travel." },
+    { name: "Gatwick Airport", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/rpBfpoRLxwlS-WUIYEd1fZT4f2VbAstXzdCEWmxCHcp.jpg", desc: "Known for its efficient terminals and extensive flight network." },
+    { name: "Manchester Airport", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/NKYFoNLN3fLl-PmEk8YESq8DqB2Nz8hp3aNbW5Ky0a4.jpg", desc: "Serving millions of travelers every year, a major gateway to Europe and beyond." },
+  ];
+
+  const fleet = [
+    { name: "Standard Saloon", passengers: "4", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/1A8TInoYmh5L-pVy1JRQIj6miR0Z3bWqmGSnvvIxinC.png" },
+    { name: "Estate", passengers: "4", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Rm0kaGQ1rmiI-7ke9zOInTvCtJ6TTLhPrmR0DtBTgtQ.png" },
+    { name: "MPV", passengers: "6", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/q3cXedoVmhIR-7FbezwJtfuKOEdJn19lDka9u5YumR6.png" },
+    { name: "Minibus", passengers: "8", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/q3cXedoVmhIR-7FbezwJtfuKOEdJn19lDka9u5YumR6.png" },
+    { name: "Luxury", passengers: "4", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Gv684D8YAl4J-7i8XaY73oiLwLvElvvo4qLTsrv7ZCo.png" },
+  ];
+
+  const services = [
+    { title: "Corporate Events", icon: "briefcase" },
+    { title: "Family / Large Parties", icon: "users" },
+    { title: "Various Vehicles", icon: "car" },
+  ];
+
+  const travelerTypes = [
+    { title: "Business Travelers", desc: "Punctual and professional airport transfers, allowing you to focus on your work while we handle the logistics." },
+    { title: "Corporate Clients", desc: "Reliable and executive-level service for corporate travelers, with luxury vehicle options available." },
+    { title: "Families & Groups", desc: "Spacious vehicles with ample room for luggage, child seats available on request." },
+    { title: "Holidaymakers", desc: "Start your trip on the right note with a comfortable ride to the airport." },
+    { title: "Students & Individuals", desc: "Affordable and dependable transport between university and the airport." },
+    { title: "Special Occasions", desc: "Need an airport transfer for a wedding, event, or celebration? We provide tailored solutions." },
   ];
 
   return (
-    <Wrapper>
-      {/* Hero Section */}
-      <HeroSection>
-        <HeroImage
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wI0S8reqFCXK-wajzrlFgNLv9tca6oKyJaHqBo1etuj.png"
-          alt="Premium Airport Transfers"
-        />
-        <HeroOverlay />
-        
-        {/* Header */}
-        <Header>
-          <LogoContainer>
-            <Logo
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-[#003D7A] text-white">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <img
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
               alt="CabnFly"
+              className="h-12"
             />
-            <BrandName>CabnFly</BrandName>
-          </LogoContainer>
-          <Profile>
-            <UserName>{user?.name}</UserName>
-            <UserImage
+            <span className="font-bold text-xl">CabnFly</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:block text-sm">{user?.name}</span>
+            <img
               src={user?.photoUrl}
               alt="Profile"
+              className="h-10 w-10 rounded-full border-2 border-white cursor-pointer hover:opacity-80"
               onClick={() => signOut(auth)}
             />
-          </Profile>
-        </Header>
+          </div>
+        </div>
+      </header>
 
-        {/* Hero Content */}
-        <HeroContent>
-          <HeroTitle>Premium Airport Transfers</HeroTitle>
-          <HeroSubtitle>Luxury vehicles, professional drivers, fixed prices</HeroSubtitle>
-          
-          <Link href="/search">
-            <BookButton>
-              <BookButtonIcon>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                </svg>
-              </BookButtonIcon>
-              Book Your Transfer
-            </BookButton>
-          </Link>
-        </HeroContent>
-      </HeroSection>
+      {/* Hero Section with Booking Form */}
+      <section className="relative">
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wI0S8reqFCXK-wajzrlFgNLv9tca6oKyJaHqBo1etuj.png"
+            alt="Airport Transfer"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003D7A]/90 to-[#003D7A]/70"></div>
+        </div>
 
-      {/* Main Content */}
-      <ContentSection>
-        {/* Service Cards */}
-        <SectionTitle>Our Services</SectionTitle>
-        <ServiceGrid>
-          <Link href="/search">
-            <ServiceCard>
-              <ServiceImage
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ZWNZSeEbdwEw-Vg0B8ck54tLZKPggDr2FpNFdJnLCD2.png"
-                alt="Airport Transfer"
-              />
-              <ServiceContent>
-                <ServiceTitle>Airport Transfer</ServiceTitle>
-                <ServiceDescription>To and from all UK airports</ServiceDescription>
-              </ServiceContent>
-            </ServiceCard>
-          </Link>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left - Text */}
+            <div className="text-white">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+                Your Premier Airport Transfer Service
+              </h1>
+              <p className="text-lg text-gray-200 mb-6">
+                At CabnFly, we offer private hire taxi services from anywhere in the UK to all major airports, ensuring you reach your destination comfortably, on time, and at the best price.
+              </p>
+            </div>
 
-          <ServiceCard onClick={() => alert("Coming soon!")}>
-            <ServiceIcon>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-              </svg>
-            </ServiceIcon>
-            <ServiceContent>
-              <ServiceTitle>Pre-Book</ServiceTitle>
-              <ServiceDescription>Schedule in advance</ServiceDescription>
-            </ServiceContent>
-          </ServiceCard>
+            {/* Right - Booking Form */}
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Tabs */}
+              <div className="flex border-b">
+                <button
+                  className={`flex-1 py-4 font-semibold text-center transition ${
+                    formTab === "quick"
+                      ? "bg-[#FFD700] text-[#003D7A]"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                  onClick={() => setFormTab("quick")}
+                >
+                  Quick Quote
+                </button>
+                <button
+                  className={`flex-1 py-4 font-semibold text-center transition ${
+                    formTab === "full"
+                      ? "bg-[#FFD700] text-[#003D7A]"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                  onClick={() => setFormTab("full")}
+                >
+                  Full Form
+                </button>
+              </div>
 
-          <ServiceCard onClick={() => alert("Coming soon!")}>
-            <ServiceIcon>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-              </svg>
-            </ServiceIcon>
-            <ServiceContent>
-              <ServiceTitle>Corporate</ServiceTitle>
-              <ServiceDescription>Business accounts</ServiceDescription>
-            </ServiceContent>
-          </ServiceCard>
-        </ServiceGrid>
+              {/* Form Content */}
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Airport</label>
+                  <select
+                    value={selectedAirport}
+                    onChange={(e) => setSelectedAirport(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                  >
+                    <option value="">Select an airport...</option>
+                    {UK_AIRPORTS.map((airport) => (
+                      <option key={airport.code} value={airport.name}>
+                        {airport.name} ({airport.code})
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-        {/* Popular Airports */}
-        <SectionTitle>Popular Airports</SectionTitle>
-        <AirportGrid>
-          {airports.map((airport, index) => (
-            <Link href="/search" key={index}>
-              <AirportCard>
-                <AirportImage src={airport.image} alt={airport.name} />
-                <AirportOverlay />
-                <AirportName>{airport.name}</AirportName>
-              </AirportCard>
-            </Link>
-          ))}
-        </AirportGrid>
+                {formTab === "full" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label>
+                    <input
+                      type="text"
+                      value={pickup}
+                      onChange={(e) => setPickup(e.target.value)}
+                      placeholder="Enter your pickup address"
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                    />
+                  </div>
+                )}
 
-        {/* Fleet Preview */}
-        <SectionTitle>Our Premium Fleet</SectionTitle>
-        <FleetGrid>
-          <FleetCard>
-            <FleetImage
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Rm0kaGQ1rmiI-7ke9zOInTvCtJ6TTLhPrmR0DtBTgtQ.png"
-              alt="Executive Saloon"
-            />
-            <FleetInfo>
-              <FleetName>Executive Saloon</FleetName>
-              <FleetDesc>Audi A6 or similar</FleetDesc>
-            </FleetInfo>
-          </FleetCard>
-          <FleetCard>
-            <FleetImage
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Gv684D8YAl4J-7i8XaY73oiLwLvElvvo4qLTsrv7ZCo.png"
-              alt="Luxury"
-            />
-            <FleetInfo>
-              <FleetName>Luxury</FleetName>
-              <FleetDesc>Mercedes S-Class</FleetDesc>
-            </FleetInfo>
-          </FleetCard>
-          <FleetCard>
-            <FleetImage
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/q3cXedoVmhIR-7FbezwJtfuKOEdJn19lDka9u5YumR6.png"
-              alt="MPV"
-            />
-            <FleetInfo>
-              <FleetName>Executive MPV</FleetName>
-              <FleetDesc>Mercedes V-Class</FleetDesc>
-            </FleetInfo>
-          </FleetCard>
-        </FleetGrid>
-      </ContentSection>
-    </Wrapper>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Collection Date</label>
+                    <input
+                      type="date"
+                      value={collectionDate}
+                      onChange={(e) => setCollectionDate(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Collection Time</label>
+                    <select
+                      value={collectionTime}
+                      onChange={(e) => setCollectionTime(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                    >
+                      <option value="">Select time...</option>
+                      {TIME_OPTIONS.map((time) => (
+                        <option key={time} value={time}>{time}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {formTab === "full" && (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Passengers</label>
+                      <select
+                        value={passengers}
+                        onChange={(e) => setPassengers(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                      >
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Luggage</label>
+                      <select
+                        value={luggage}
+                        onChange={(e) => setLuggage(e.target.value)}
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#003D7A] focus:border-transparent"
+                      >
+                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                          <option key={n} value={n}>{n}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={handleGetQuote}
+                  className="w-full bg-[#003D7A] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#002D5A] transition"
+                >
+                  Get Quote
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-[#003D7A] text-center mb-12">Our Services</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {services.map((service, idx) => (
+              <div key={idx} className="text-center p-8 rounded-2xl bg-gray-50 hover:shadow-lg transition">
+                <div className="w-20 h-20 mx-auto mb-4 bg-[#003D7A] rounded-full flex items-center justify-center">
+                  <svg className="w-10 h-10 text-[#FFD700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {service.icon === "briefcase" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />}
+                    {service.icon === "users" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />}
+                    {service.icon === "car" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />}
+                  </svg>
+                </div>
+                <h3 className="text-xl font-bold text-[#003D7A] mb-2">{service.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Hassle Free Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-[#003D7A] text-center mb-4">
+            Hassle Free Airport Transfers at Your Convenience
+          </h2>
+          <p className="text-center text-gray-600 mb-12 max-w-3xl mx-auto">
+            CabnFly is designed to cater to all types of travelers, ensuring a smooth and convenient journey tailored to individual needs.
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {travelerTypes.map((type, idx) => (
+              <div key={idx} className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+                <h3 className="font-bold text-[#003D7A] mb-2">{type.title}</h3>
+                <p className="text-gray-600 text-sm">{type.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-[#003D7A] font-semibold mt-8">
+            Skip the hassle. Travel smarter with CabnFly. Book now and experience the best in airport transfers.
+          </p>
+        </div>
+      </section>
+
+      {/* Fleet Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-[#003D7A] text-center mb-12">Our Fleet</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {fleet.map((vehicle, idx) => (
+              <div key={idx} className="bg-gray-50 rounded-xl p-4 text-center hover:shadow-lg transition">
+                <img
+                  src={vehicle.image}
+                  alt={vehicle.name}
+                  className="h-24 w-full object-contain mb-4"
+                />
+                <h3 className="font-bold text-[#003D7A]">{vehicle.name}</h3>
+                <p className="text-sm text-gray-600">{vehicle.passengers} PERSON</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Airports Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-[#003D7A] text-center mb-12">Popular Airports</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {airports.map((airport, idx) => (
+              <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition">
+                <img
+                  src={airport.image}
+                  alt={airport.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-[#003D7A] mb-2">{airport.name}</h3>
+                  <p className="text-gray-600">{airport.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#003D7A] text-white py-8">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
+            alt="CabnFly"
+            className="h-16 mx-auto mb-4"
+          />
+          <p className="text-gray-300">Your Premier Airport Transfer Service</p>
+          <p className="text-sm text-gray-400 mt-4">CabnFly - All Rights Reserved</p>
+        </div>
+      </footer>
+    </div>
   );
 }
-
-// Styled components
-const Wrapper = tw.div`
-  min-h-screen bg-gray-50
-`;
-
-const HeroSection = tw.div`
-  relative h-80 lg:h-96
-`;
-
-const HeroImage = tw.img`
-  absolute inset-0 w-full h-full object-cover object-center
-`;
-
-const HeroOverlay = tw.div`
-  absolute inset-0 bg-gradient-to-b from-brand-blue/90 via-brand-blue/70 to-brand-blue/90
-`;
-
-const Header = tw.header`
-  relative z-10 flex justify-between items-center p-4 lg:p-6
-`;
-
-const LogoContainer = tw.div`
-  flex items-center gap-2
-`;
-
-const Logo = tw.img`
-  h-12 lg:h-14 object-contain
-`;
-
-const BrandName = tw.span`
-  text-white font-bold text-xl hidden sm:block
-`;
-
-const Profile = tw.div`
-  flex items-center gap-3
-`;
-
-const UserName = tw.span`
-  text-white text-sm hidden sm:block
-`;
-
-const UserImage = tw.img`
-  h-10 w-10 rounded-full border-2 border-white cursor-pointer hover:opacity-80 transition
-`;
-
-const HeroContent = tw.div`
-  relative z-10 flex flex-col items-center justify-center text-center px-4 pt-8
-`;
-
-const HeroTitle = tw.h1`
-  text-3xl lg:text-4xl font-bold text-white mb-2 drop-shadow-lg
-`;
-
-const HeroSubtitle = tw.p`
-  text-gray-200 mb-6 text-lg
-`;
-
-const BookButton = tw.button`
-  flex items-center gap-2 bg-brand-yellow text-brand-dark font-bold py-4 px-8 rounded-xl
-  hover:bg-brand-gold transition shadow-lg hover:shadow-xl text-lg
-`;
-
-const BookButtonIcon = tw.span`
-  w-5 h-5
-`;
-
-const ContentSection = tw.main`
-  px-4 lg:px-8 py-6 max-w-6xl mx-auto
-`;
-
-const SectionTitle = tw.h2`
-  text-xl font-bold text-brand-blue mb-4 mt-6
-`;
-
-const ServiceGrid = tw.div`
-  grid grid-cols-1 sm:grid-cols-3 gap-4
-`;
-
-const ServiceCard = tw.div`
-  bg-white rounded-xl shadow-md overflow-hidden cursor-pointer
-  hover:shadow-lg transition transform hover:-translate-y-1
-`;
-
-const ServiceImage = tw.img`
-  w-full h-32 object-contain bg-gray-50 p-4
-`;
-
-const ServiceIcon = tw.div`
-  w-full h-32 flex items-center justify-center bg-gray-50 text-brand-blue
-`;
-
-const ServiceContent = tw.div`
-  p-4
-`;
-
-const ServiceTitle = tw.h3`
-  font-bold text-brand-dark
-`;
-
-const ServiceDescription = tw.p`
-  text-sm text-gray-600
-`;
-
-const AirportGrid = tw.div`
-  grid grid-cols-2 lg:grid-cols-4 gap-4
-`;
-
-const AirportCard = tw.div`
-  relative rounded-xl overflow-hidden h-32 cursor-pointer group
-`;
-
-const AirportImage = tw.img`
-  absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition duration-300
-`;
-
-const AirportOverlay = tw.div`
-  absolute inset-0 bg-gradient-to-t from-brand-blue/80 to-transparent
-`;
-
-const AirportName = tw.span`
-  absolute bottom-3 left-3 text-white font-bold text-lg drop-shadow
-`;
-
-const FleetGrid = tw.div`
-  grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8
-`;
-
-const FleetCard = tw.div`
-  bg-white rounded-xl shadow-md overflow-hidden
-`;
-
-const FleetImage = tw.img`
-  w-full h-40 object-contain bg-gray-50 p-4
-`;
-
-const FleetInfo = tw.div`
-  p-4 border-t
-`;
-
-const FleetName = tw.h4`
-  font-bold text-brand-dark
-`;
-
-const FleetDesc = tw.p`
-  text-sm text-gray-600
-`;
