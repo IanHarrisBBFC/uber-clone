@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import tw from "tailwind-styled-components";
 import mapboxgl from "!mapbox-gl";
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiaWFuMDM4IiwiYSI6ImNrejRkdWVscDBmZzgyb28yOGVjazFkaWMifQ.rpr-o9cBKiJ2PGh8K8VzXA';
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
 export default function Map({ pickup, dropoff }) {
     useEffect(() => {
 		const map = new mapboxgl.Map({
 			container: "map",
-			style: "mapbox://styles/ian038/ckzent9tw000w14qsp0bs46j2",
+			style: "mapbox://styles/mapbox/streets-v12",
 			center: [75.8366318, 25.1389012],
 			zoom: 3
 		});
