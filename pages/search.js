@@ -256,7 +256,7 @@ const Wrapper = tw.div`
 `;
 
 const HeaderSection = tw.header`
-  bg-brand-blue text-white p-4 flex items-center justify-between
+  bg-brand-black text-white p-4 flex items-center justify-between
 `;
 
 const BackButton = tw.button`
@@ -288,7 +288,7 @@ const IconColumn = tw.div`
 `;
 
 const PickupDot = tw.div`
-  w-3 h-3 rounded-full bg-brand-blue
+  w-3 h-3 rounded-full bg-brand-black
 `;
 
 const ConnectorLine = tw.div`
@@ -334,7 +334,7 @@ const SuggestionIcon = tw.span`
 `;
 
 const SwapButton = tw.button`
-  p-2 text-brand-blue hover:bg-brand-blue/10 rounded-full transition self-center
+  p-2 text-brand-black hover:bg-brand-black/10 rounded-full transition self-center
 `;
 
 const SectionTitle = tw.h2`
@@ -347,16 +347,16 @@ const AirportChips = tw.div`
 
 const AirportChip = tw.button`
   flex items-center gap-1 px-3 py-2 bg-white rounded-full text-sm font-medium
-  text-gray-700 shadow-sm hover:shadow-md hover:bg-brand-blue hover:text-white transition
+  text-gray-700 shadow-sm hover:shadow-md hover:bg-brand-black hover:text-white transition
 `;
 
 const ChipIcon = tw.span`
-  text-brand-blue group-hover:text-white
+  text-brand-black group-hover:text-white
 `;
 
 const ConfirmButton = tw.button`
-  w-full flex items-center justify-center gap-2 bg-brand-blue text-white py-4 rounded-xl
-  font-bold text-lg hover:bg-brand-blue-light transition shadow-lg hover:shadow-xl
+  w-full flex items-center justify-center gap-2 bg-brand-black text-white py-4 rounded-xl
+  font-bold text-lg hover:bg-brand-black-light transition shadow-lg hover:shadow-xl
 `;
 
 const InfoGrid = tw.div`

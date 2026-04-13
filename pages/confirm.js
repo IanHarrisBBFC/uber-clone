@@ -55,7 +55,7 @@ export default function Confirm() {
       {/* Route Summary */}
       <RouteSummary>
         <RoutePoint>
-          <RouteDot className="bg-brand-blue" />
+          <RouteDot className="bg-brand-black" />
           <RouteText>
             <RouteLabel>Pickup</RouteLabel>
             <RouteAddress>{pickup || "Not selected"}</RouteAddress>
@@ -110,7 +110,7 @@ const Wrapper = tw.div`
 `;
 
 const HeaderBar = tw.header`
-  bg-brand-blue text-white p-4 flex items-center justify-between z-20
+  bg-brand-black text-white p-4 flex items-center justify-between z-20
 `;
 
 const BackButton = tw.button`
@@ -166,8 +166,8 @@ const ConfirmButtonContainer = tw.div`
 `;
 
 const ConfirmButton = tw.button`
-  w-full bg-brand-blue text-white py-4 rounded-xl font-bold text-lg
-  hover:bg-brand-blue-light transition shadow-lg
+  w-full bg-brand-black text-white py-4 rounded-xl font-bold text-lg
+  hover:bg-brand-black-light transition shadow-lg
 `;
 
 const ButtonContent = tw.span`

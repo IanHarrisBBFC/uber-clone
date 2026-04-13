@@ -109,7 +109,7 @@ const Header = tw.div`
 `;
 
 const Title = tw.h2`
-  font-bold text-brand-blue
+  font-bold text-brand-black
 `;
 
 const Duration = tw.div`
@@ -117,7 +117,7 @@ const Duration = tw.div`
 `;
 
 const DurationIcon = tw.span`
-  text-brand-blue
+  text-brand-black
 `;
 
 const CarList = tw.div`
@@ -126,7 +126,7 @@ const CarList = tw.div`
 
 const CarCard = tw.div`
   flex items-center p-4 border-b cursor-pointer transition
-  ${(props) => props.$selected ? 'bg-brand-blue/5 border-l-4 border-l-brand-blue' : 'hover:bg-gray-50 border-l-4 border-l-transparent'}
+  ${(props) => props.$selected ? 'bg-brand-black/5 border-l-4 border-l-brand-black' : 'hover:bg-gray-50 border-l-4 border-l-transparent'}
 `;
 
 const CarImageContainer = tw.div`
@@ -162,9 +162,9 @@ const PriceContainer = tw.div`
 `;
 
 const Price = tw.div`
-  font-bold text-lg text-brand-blue
+  font-bold text-lg text-brand-black
 `;
 
 const SelectedBadge = tw.span`
-  text-xs text-brand-yellow bg-brand-blue px-2 py-0.5 rounded-full
+  text-xs text-brand-yellow bg-brand-black px-2 py-0.5 rounded-full
 `;
