@@ -11,7 +11,7 @@
   "dependencies": {
     "firebase": "^11.4.0",
     "mapbox-gl": "^2.14.0",
-    "next": "^15.2.3",
+    "next": "15.2.8",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
