@@ -107,41 +107,40 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#111111] text-white">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
-              alt="CabnFly"
-              className="h-12"
-            />
-            <span className="font-bold text-xl">CabnFly</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="hidden sm:block text-sm">{user?.name}</span>
-            <img
-              src={user?.photoUrl}
-              alt="Profile"
-              className="h-10 w-10 rounded-full border-2 border-white cursor-pointer hover:opacity-80"
-              onClick={() => signOut(auth)}
-            />
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section with Booking Form */}
       <section className="relative">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wI0S8reqFCXK-wajzrlFgNLv9tca6oKyJaHqBo1etuj.png"
-            alt="Airport Transfer"
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot_78.png-n9Q46lv7qR4bHXYH92ycGu8e2yskU8.jpeg"
+            alt="Premium Mercedes Taxi"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/90 to-[#111111]/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/80 to-[#111111]/50"></div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16 lg:py-24">
+        {/* Transparent Header */}
+        <header className="relative z-20">
+          <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div className="flex items-center">
+              <img
+                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
+                alt="CabnFly"
+                className="h-12"
+              />
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="hidden sm:block text-sm text-white">{user?.name}</span>
+              <img
+                src={user?.photoUrl}
+                alt="Profile"
+                className="h-10 w-10 rounded-full border-2 border-white cursor-pointer hover:opacity-80"
+                onClick={() => signOut(auth)}
+              />
+            </div>
+          </div>
+        </header>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-12 lg:py-20">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left - Text */}
             <div className="text-white">
