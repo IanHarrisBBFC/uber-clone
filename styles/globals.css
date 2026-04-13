@@ -1,25 +1,56 @@
+/* CabnFly Airport Transfers - Premium Branding */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Font */
+@font-face {
+  font-family: 'CabnFly';
+  src: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/0kInm7nUamzY-6XWrlluO6Zf97uQSjCfl1KVETIToxz.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  /* Primary Colors */
+  --primary-blue: #003D7A;
+  --primary-yellow: #FFD700;
+  --primary-gold: #DAA520;
+  
+  /* Neutral Colors */
+  --white: #FFFFFF;
+  --off-white: #F8F9FA;
+  --light-gray: #E9ECEF;
+  --medium-gray: #6C757D;
+  --dark-gray: #343A40;
+  --black: #1A1A1A;
+  
+  /* Accent Colors */
+  --success: #28A745;
+  --info: #17A2B8;
+}
+
 /* Reset Default Styles */
 html, body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen,
     Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  background-color: #f8f9fa; /* Light gray background */
-  color: #333; /* Dark text for readability */
+  background-color: var(--off-white);
+  color: var(--dark-gray);
   line-height: 1.6;
-  scroll-behavior: smooth; /* Smooth scrolling */
+  scroll-behavior: smooth;
 }
 
-/* Improve link styles */
+/* Premium Link Styles */
 a {
-  color: #0070f3; /* Default blue color */
+  color: var(--primary-blue);
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 a:hover {
-  color: #0056b3; /* Darker blue on hover */
-  text-decoration: underline;
+  color: var(--primary-gold);
 }
 
 /* Global Box Sizing */
@@ -29,25 +60,9 @@ a:hover {
   padding: 0;
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  html, body {
-    background-color: #121212;
-    color: #f5f5f5;
-  }
-
-  a {
-    color: #0a84ff;
-  }
-
-  a:hover {
-    color: #66aaff;
-  }
-}
-
 /* Accessibility Improvements */
 *:focus {
-  outline: 2px solid #0070f3;
+  outline: 2px solid var(--primary-blue);
   outline-offset: 2px;
 }
 
@@ -55,8 +70,55 @@ a:hover {
 h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   line-height: 1.2;
+  color: var(--primary-blue);
 }
 
 p {
   margin-bottom: 1rem;
+}
+
+/* Premium Button Base */
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-gold);
+  color: var(--black);
+}
+
+.btn-gold {
+  background-color: var(--primary-yellow);
+  color: var(--black);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: var(--primary-gold);
+}
+
+/* Gradient Background */
+.gradient-bg {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, #005A9E 100%);
+}
+
+/* Card Styles */
+.premium-card {
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 61, 122, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 61, 122, 0.15);
 }
