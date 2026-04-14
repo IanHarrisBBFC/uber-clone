@@ -33,7 +33,7 @@ for (let h = 0; h < 24; h++) {
 
 export default function Home() {
   const [user, setUser] = useState(null);
-  const [formTab, setFormTab] = useState("quick");
+  const [formTab, setFormTab] = useState("full");
   const [selectedAirport, setSelectedAirport] = useState("");
   const [collectionDate, setCollectionDate] = useState("");
   const [collectionTime, setCollectionTime] = useState("");
@@ -166,32 +166,9 @@ export default function Home() {
 
             {/* Right - Booking Form */}
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-              {/* Tabs */}
-              <div className="flex border-b">
-                <button
-                  className={`flex-1 py-4 font-semibold text-center transition ${
-                    formTab === "quick"
-                      ? "bg-[#FFD700] text-[#111111]"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setFormTab("quick")}
-                >
-                  Quick Quote
-                </button>
-                <button
-                  className={`flex-1 py-4 font-semibold text-center transition ${
-                    formTab === "full"
-                      ? "bg-[#FFD700] text-[#111111]"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setFormTab("full")}
-                >
-                  Full Form
-                </button>
-              </div>
-
               {/* Form Content */}
               <div className="p-6 space-y-4">
+                <h3 className="text-lg font-bold text-[#111111] mb-4">Book Your Transfer</h3>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Select Airport</label>
                   <select
@@ -208,18 +185,16 @@ export default function Home() {
                   </select>
                 </div>
 
-                {formTab === "full" && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label>
-                    <input
-                      type="text"
-                      value={pickup}
-                      onChange={(e) => setPickup(e.target.value)}
-                      placeholder="Enter your pickup address"
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label>
+                  <input
+                    type="text"
+                    value={pickup}
+                    onChange={(e) => setPickup(e.target.value)}
+                    placeholder="Enter your pickup address"
+                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
+                  />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -246,34 +221,32 @@ export default function Home() {
                   </div>
                 </div>
 
-                {formTab === "full" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Passengers</label>
-                      <select
-                        value={passengers}
-                        onChange={(e) => setPassengers(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Luggage</label>
-                      <select
-                        value={luggage}
-                        onChange={(e) => setLuggage(e.target.value)}
-                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
-                      >
-                        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                          <option key={n} value={n}>{n}</option>
-                        ))}
-                      </select>
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Passengers</label>
+                    <select
+                      value={passengers}
+                      onChange={(e) => setPassengers(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
                   </div>
-                )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Luggage</label>
+                    <select
+                      value={luggage}
+                      onChange={(e) => setLuggage(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
+                    >
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
                 <button
                   onClick={handleGetQuote}
