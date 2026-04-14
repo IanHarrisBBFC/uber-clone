@@ -91,9 +91,21 @@ export default function Home() {
   ];
 
   const services = [
-    { title: "Corporate Events", icon: "briefcase" },
-    { title: "Family / Large Parties", icon: "users" },
-    { title: "Various Vehicles", icon: "car" },
+    {
+      title: "Corporate Events",
+      desc: "Punctual, professional transfers for business meetings, conferences and corporate events.",
+      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot_78.png-ISxnjQARXrOgteWWzI5cjYby2tjKfB.jpeg",
+    },
+    {
+      title: "Family / Large Parties",
+      desc: "Spacious vehicles with ample luggage room for families and groups travelling together.",
+      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/q3cXedoVmhIR-7FbezwJtfuKOEdJn19lDka9u5YumR6.png",
+    },
+    {
+      title: "Various Vehicles",
+      desc: "From standard saloons to luxury executive cars — choose the right vehicle for your journey.",
+      image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/wI0S8reqFCXK-wajzrlFgNLv9tca6oKyJaHqBo1etuj.png",
+    },
   ];
 
   const travelerTypes = [
@@ -281,15 +293,24 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-[#111111] text-center mb-12">Our Services</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {services.map((service, idx) => (
-              <div key={idx} className="text-center p-8 rounded-2xl bg-gray-50 hover:shadow-lg transition">
-                <div className="w-20 h-20 mx-auto mb-4 bg-[#111111] rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-[#FFD700]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    {service.icon === "briefcase" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />}
-                    {service.icon === "users" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />}
-                    {service.icon === "car" && <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />}
-                  </svg>
+              <div key={idx} className="rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition group">
+                <div className="relative h-52 overflow-hidden">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-[#111111]/40"></div>
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-xl font-bold text-white">{service.title}</h3>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-[#111111] mb-2">{service.title}</h3>
+                <div className="p-5">
+                  <p className="text-gray-600 text-sm leading-relaxed">{service.desc}</p>
+                  <div className="mt-4 inline-block bg-[#FFD700] text-[#111111] text-sm font-semibold px-4 py-2 rounded-lg">
+                    Book Now
+                  </div>
+                </div>
               </div>
             ))}
           </div>
