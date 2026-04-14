@@ -156,7 +156,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left - Text */}
             <div className="text-white">
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
                 Your Premier Airport Transfer Service
               </h1>
               <p className="text-lg text-gray-200 mb-6">
