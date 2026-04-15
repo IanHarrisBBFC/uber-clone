@@ -90,7 +90,7 @@ export default function RideSelector({ pickup, dropoff }) {
             </CarInfo>
 
             <PriceContainer>
-              <Price>${formatPrice(rideDuration, car.multiplier)}</Price>
+              <Price>£{formatPrice(rideDuration, car.multiplier)}</Price>
               {selectedCar === index && <SelectedBadge>Selected</SelectedBadge>}
             </PriceContainer>
           </CarCard>
