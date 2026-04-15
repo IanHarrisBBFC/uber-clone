@@ -10,7 +10,9 @@ const Wrapper = styled.div`
 `;
 
 const Container = styled.div`
-  max-width: 1200px margin 0 auto p-4
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 `;
 
 const Header = styled.div`
