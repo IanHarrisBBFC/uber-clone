@@ -162,7 +162,7 @@ const MapContainer = tw.div`
 `;
 
 const RideContainer = tw.div`
-  w-full md:w-96 lg:w-[420px] flex flex-col overflow-hidden bg-gray-50 border-l border-gray-200
+  w-full md:w-96 lg:w-[420px] flex flex-col flex-1 overflow-hidden bg-gray-50 border-l border-gray-200
 `;
 
 const ConfirmButtonContainer = tw.div`
