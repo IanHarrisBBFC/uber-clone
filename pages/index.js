@@ -180,8 +180,8 @@ export default function Home() {
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
                 alt="CabnFly"
-                width={48}
-                height={48}
+                width={80}
+                height={80}
               />
             </div>
             <div className="flex items-center gap-4">
