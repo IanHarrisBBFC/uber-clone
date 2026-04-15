@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { signInWithPopup, onAuthStateChanged } from "firebase/auth";
 import { auth, googleProvider } from "../firebase";
 
@@ -29,17 +30,20 @@ export default function Login() {
     <div className="min-h-screen flex flex-col lg:flex-row">
       {/* Hero Section */}
       <div className="relative lg:w-1/2 h-72 lg:h-screen">
-        <img
+        <Image
           src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/MfPAOfarF9VV-qj6ZgFxyU4GliYT8463V1uKPJ5bEL3.jpg"
           alt="Heathrow International Airport"
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          className="absolute inset-0 object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b lg:bg-gradient-to-r from-[#111111]/90 to-[#111111]/60"></div>
         <div className="relative z-10 flex flex-col items-center justify-center h-full p-8 text-white text-center">
-          <img
+          <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
             alt="CabnFly Logo"
-            className="h-20 lg:h-32 mb-4"
+            width={120}
+            height={120}
+            className="mb-4"
           />
           <h1 className="text-3xl lg:text-5xl font-bold mb-2 drop-shadow-lg">CabnFly</h1>
           <p className="text-lg lg:text-xl text-white">Your Premier Airport Transfer Service</p>

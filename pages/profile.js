@@ -25,7 +25,7 @@ export default function ProfilePage() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router, fetchRides]);
 
   const fetchRides = async (userId) => {
     try {
