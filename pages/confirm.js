@@ -4,9 +4,6 @@ import Map from "../components/Map";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import RideSelector from "../components/RideSelector";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Confirm() {
   const router = useRouter();
@@ -24,6 +21,7 @@ export default function Confirm() {
     }
     
     setIsBooking(true);
+    console.log("[v0] Starting booking with:", { pickup, dropoff, price: selectedRide.price });
     
     try {
       // Create Stripe checkout session
@@ -41,20 +39,19 @@ export default function Confirm() {
         })
       });
 
-      const { sessionId } = await response.json();
+      console.log("[v0] API response status:", response.status);
+      const data = await response.json();
+      console.log("[v0] API response data:", data);
       
-      // Redirect to Stripe checkout
-      const stripe = await stripePromise;
-      const result = await stripe.redirectToCheckout({
-        sessionId: sessionId
-      });
-
-      if (result.error) {
-        console.error('Stripe error:', result.error);
+      if (data.sessionId) {
+        // Redirect to Stripe checkout using URL redirect (simpler method)
+        window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
+      } else {
+        console.error("[v0] No sessionId in response");
         setIsBooking(false);
       }
     } catch (error) {
-      console.error('Booking error:', error);
+      console.error('[v0] Booking error:', error);
       setIsBooking(false);
     }
   };
