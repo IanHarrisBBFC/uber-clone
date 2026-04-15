@@ -1,11 +1,53 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Success() {
   const router = useRouter();
   const { pickup, dropoff, vehicle, price } = router.query;
+  const [bookingRef, setBookingRef] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const ref = "CAB" + Math.random().toString(36).substring(2, 8).toUpperCase();
+    setBookingRef(ref);
+
+    // Save ride to Supabase
+    const saveRide = async () => {
+      try {
+        const currentUser = auth.currentUser;
+        if (!currentUser || !pickup || !dropoff || !vehicle || !price) return;
+
+        const supabase = createClient();
+        const { error } = await supabase.from("rides").insert([
+          {
+            user_id: currentUser.uid,
+            booking_ref: ref,
+            pickup,
+            dropoff,
+            vehicle,
+            price: parseFloat(price),
+            status: "completed",
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+        if (error) {
+          console.error("Error saving ride:", error);
+        } else {
+          setSaved(true);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    saveRide();
+  }, [pickup, dropoff, vehicle, price]);
 
   return (
     <Wrapper>
@@ -22,7 +64,7 @@ export default function Success() {
         <BookingCard>
           <BookingHeader>
             <BookingRef>Booking Reference</BookingRef>
-            <RefNumber>CAB{Math.random().toString(36).substring(2, 8).toUpperCase()}</RefNumber>
+            <RefNumber>{bookingRef}</RefNumber>
           </BookingHeader>
 
           <BookingDetails>
@@ -53,6 +95,9 @@ export default function Success() {
         <ButtonGroup>
           <Link href="/" className="w-full">
             <PrimaryButton>Back to Home</PrimaryButton>
+          </Link>
+          <Link href="/profile" className="w-full">
+            <SecondaryButton>View Ride History</SecondaryButton>
           </Link>
         </ButtonGroup>
       </Content>
@@ -126,6 +171,10 @@ const ButtonGroup = tw.div`
 
 const PrimaryButton = tw.button`
   w-full bg-brand-black text-white py-4 rounded-xl font-bold hover:bg-brand-black/90 transition
+`;
+
+const SecondaryButton = tw.button`
+  w-full bg-[#FFD700] text-brand-black py-4 rounded-xl font-bold hover:bg-yellow-600 transition
 `;
 
 const Footer = tw.div`

@@ -4,6 +4,9 @@ import Map from "../components/Map";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import RideSelector from "../components/RideSelector";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Confirm() {
   const router = useRouter();
@@ -14,7 +17,7 @@ export default function Confirm() {
   const [selectedRide, setSelectedRide] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (!selectedRide) {
       alert("Please select a vehicle first");
       return;
@@ -22,18 +25,38 @@ export default function Confirm() {
     
     setIsBooking(true);
     
-    // Navigate to success page with booking details
-    setTimeout(() => {
-      router.push({
-        pathname: '/success',
-        query: {
-          pickup,
-          dropoff,
-          vehicle: selectedRide.vehicle.service,
-          price: selectedRide.price
-        }
+    try {
+      // Create Stripe checkout session
+      const response = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: Math.round(parseFloat(selectedRide.price) * 100),
+          rideDetails: {
+            pickup,
+            dropoff,
+            vehicle: selectedRide.vehicle.service,
+            price: selectedRide.price
+          }
+        })
       });
-    }, 1000);
+
+      const { sessionId } = await response.json();
+      
+      // Redirect to Stripe checkout
+      const stripe = await stripePromise;
+      const result = await stripe.redirectToCheckout({
+        sessionId: sessionId
+      });
+
+      if (result.error) {
+        console.error('Stripe error:', result.error);
+        setIsBooking(false);
+      }
+    } catch (error) {
+      console.error('Booking error:', error);
+      setIsBooking(false);
+    }
   };
 
   const getCoordinates = async (location, setCoordinates) => {
