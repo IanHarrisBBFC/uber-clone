@@ -32,8 +32,7 @@ export default function FlightIntelligence({ onFlightData, collectionDate, colle
       const data = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to find flight');
+        throw new Error(data.error || 'Failed to find flight');
       }
 
       setFlightData(data);
@@ -82,11 +81,10 @@ export default function FlightIntelligence({ onFlightData, collectionDate, colle
         }),
       });
 
-      const data = await response.json();
+      const returnData = await response.json();
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to find return flight');
+        throw new Error(returnData.error || 'Failed to find return flight');
       }
 
       setReturnFlightData(data);
