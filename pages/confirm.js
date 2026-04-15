@@ -21,37 +21,22 @@ export default function Confirm() {
     }
     
     setIsBooking(true);
-    console.log("[v0] Starting booking with:", { pickup, dropoff, price: selectedRide.price });
     
     try {
-      // Create Stripe checkout session
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Math.round(parseFloat(selectedRide.price) * 100),
-          rideDetails: {
-            pickup,
-            dropoff,
-            vehicle: selectedRide.vehicle.service,
-            price: selectedRide.price
-          }
-        })
+      // Navigate to success page with booking details
+      // In production, this would process Stripe payment first
+      router.push({
+        pathname: '/success',
+        query: {
+          pickup,
+          dropoff,
+          vehicle: selectedRide.vehicle.service,
+          price: selectedRide.price
+        }
       });
-
-      console.log("[v0] API response status:", response.status);
-      const data = await response.json();
-      console.log("[v0] API response data:", data);
-      
-      if (data.sessionId) {
-        // Redirect to Stripe checkout using URL redirect (simpler method)
-        window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
-      } else {
-        console.error("[v0] No sessionId in response");
-        setIsBooking(false);
-      }
     } catch (error) {
       console.error('[v0] Booking error:', error);
+      alert('Error processing booking: ' + error.message);
       setIsBooking(false);
     }
   };
