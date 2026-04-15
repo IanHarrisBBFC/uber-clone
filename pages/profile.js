@@ -5,8 +5,6 @@ import Image from "next/image";
 import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { createClient } from "@/lib/supabase/client";
-  text-lg font-bold text-[#FFD700]
-`;
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
