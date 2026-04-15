@@ -1,53 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import Image from "next/image";
 import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { createClient } from "@/lib/supabase/client";
-import styled from "twin.macro";
-
-const Wrapper = styled.div`
-  min-h-screen bg-gray-100
-`;
-
-const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1rem;
-`;
-
-const Header = styled.div`
-  bg-[#111111] text-white p-6 rounded-lg shadow-md mb-6 flex justify-between items-center
-`;
-
-const Profile = styled.div`
-  flex items-center gap-4
-`;
-
-const Avatar = styled.img`
-  w-16 h-16 rounded-full border-2 border-[#FFD700]
-`;
-
-const RideHistory = styled.div`
-  bg-white rounded-lg shadow-md overflow-hidden
-`;
-
-const RideItem = styled.div`
-  border-b border-gray-200 p-6 hover:bg-gray-50 transition flex justify-between items-center
-`;
-
-const RideDetails = styled.div`
-  flex-1
-`;
-
-const RideDate = styled.p`
-  text-sm text-gray-500 mb-1
-`;
-
-const RideRoute = styled.p`
-  font-semibold text-[#111111] mb-2
-`;
-
-const RidePrice = styled.p`
   text-lg font-bold text-[#FFD700]
 `;
 
@@ -97,24 +54,30 @@ export default function ProfilePage() {
   const totalRides = rides.length;
 
   return (
-    <Wrapper>
-      <Container>
+    <div className="min-h-screen bg-gray-100">
+      <div className="max-w-5xl mx-auto p-4">
         {/* Header */}
-        <Header>
-          <Profile>
-            <Avatar src={user.photoURL} alt={user.displayName} />
+        <div className="bg-[#111111] text-white p-6 rounded-lg shadow-md mb-6 flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <Image
+              src={user.photoURL || '/default-profile.png'}
+              alt={user.displayName}
+              width={64}
+              height={64}
+              className="rounded-full border-2 border-[#FFD700]"
+            />
             <div>
               <h1 className="text-2xl font-bold">{user.displayName || "User"}</h1>
               <p className="text-gray-300">{user.email}</p>
             </div>
-          </Profile>
+          </div>
           <button
             onClick={() => signOut(auth)}
             className="bg-[#FFD700] text-[#111111] px-4 py-2 rounded font-bold hover:bg-yellow-600"
           >
             Sign Out
           </button>
-        </Header>
+        </div>
 
         {/* Stats */}
         <div className="grid md:grid-cols-3 gap-4 mb-6">
@@ -133,33 +96,36 @@ export default function ProfilePage() {
         </div>
 
         {/* Ride History */}
-        <RideHistory>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="p-6 bg-[#111111] text-white">
             <h2 className="text-2xl font-bold">Ride History</h2>
           </div>
           {rides.length === 0 ? (
             <div className="p-6 text-center text-gray-500">
               <p>No rides yet. Book your first transfer now!</p>
+              <Link href="/" className="text-[#FFD700] hover:underline mt-2 inline-block">
+                Book Now
+              </Link>
             </div>
           ) : (
             rides.map((ride) => (
-              <RideItem key={ride.id}>
-                <RideDetails>
-                  <RideDate>
+              <div key={ride.id} className="border-b border-gray-200 p-6 hover:bg-gray-50 transition flex justify-between items-center">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-500 mb-1">
                     {new Date(ride.created_at).toLocaleDateString()} at{" "}
                     {new Date(ride.created_at).toLocaleTimeString()}
-                  </RideDate>
-                  <RideRoute>
+                  </p>
+                  <p className="font-semibold text-[#111111] mb-2">
                     {ride.pickup} → {ride.dropoff}
-                  </RideRoute>
+                  </p>
                   <p className="text-sm text-gray-600">{ride.vehicle} • {ride.duration} mins</p>
-                </RideDetails>
-                <RidePrice>£{ride.price}</RidePrice>
-              </RideItem>
+                </div>
+                <p className="text-lg font-bold text-[#111111]">£{ride.price}</p>
+              </div>
             ))
           )}
-        </RideHistory>
-      </Container>
-    </Wrapper>
+        </div>
+      </div>
+    </div>
   );
 }
