@@ -9,13 +9,11 @@ export default function Confirm() {
   const router = useRouter();
   const { pickup, dropoff } = router.query;
 
-  const [pickupCoordinates, setPickupCoordinates] = useState([0, 0]);
-  const [dropoffCoordinates, setDropoffCoordinates] = useState([0, 0]);
+  const [pickupCoordinates, setPickupCoordinates] = useState(null);
+  const [dropoffCoordinates, setDropoffCoordinates] = useState(null);
 
-  const getCoordinates = async (location, setCoordinates, label) => {
+  const getCoordinates = async (location, setCoordinates) => {
     if (!location) return;
-
-    console.log("[v0] Getting coordinates for", label, ":", location);
 
     try {
       const response = await fetch(
@@ -27,24 +25,17 @@ export default function Confirm() {
           })
       );
       const data = await response.json();
-      console.log("[v0]", label, "geocode response:", data);
-      
       if (data.features && data.features.length > 0) {
-        const coords = data.features[0].center;
-        console.log("[v0]", label, "coordinates:", coords);
-        setCoordinates(coords);
-      } else {
-        console.log("[v0] No coordinates found for", label);
+        setCoordinates(data.features[0].center);
       }
     } catch (error) {
-      console.error("[v0] Error fetching coordinates:", error);
+      console.error("Error fetching coordinates:", error);
     }
   };
 
   useEffect(() => {
-    console.log("[v0] Confirm page loaded with pickup:", pickup, "dropoff:", dropoff);
-    if (pickup) getCoordinates(pickup, setPickupCoordinates, "pickup");
-    if (dropoff) getCoordinates(dropoff, setDropoffCoordinates, "dropoff");
+    if (pickup) getCoordinates(pickup, setPickupCoordinates);
+    if (dropoff) getCoordinates(dropoff, setDropoffCoordinates);
   }, [pickup, dropoff]);
 
   return (

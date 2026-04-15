@@ -54,53 +54,59 @@ export default function Map({ pickup, dropoff }) {
                     padding: 80
                 });
 
-                // Fetch route from Mapbox Directions API
-                try {
-                    const response = await fetch(
-                        `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
-                    );
-                    const data = await response.json();
-                    
-                    if (data.routes && data.routes.length > 0) {
-                        const route = data.routes[0].geometry;
+                // Wait for map to load before adding route
+                const addRoute = async () => {
+                    try {
+                        const response = await fetch(
+                            `https://api.mapbox.com/directions/v5/mapbox/driving/${pickup[0]},${pickup[1]};${dropoff[0]},${dropoff[1]}?geometries=geojson&access_token=${process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}`
+                        );
+                        const data = await response.json();
+                        
+                        if (data.routes && data.routes.length > 0) {
+                            const route = data.routes[0].geometry;
 
-                        map.on('load', () => {
-                            // Add route line
+                            // Remove existing route if present
+                            if (map.getLayer('route')) {
+                                map.removeLayer('route');
+                            }
                             if (map.getSource('route')) {
-                                map.getSource('route').setData({
+                                map.removeSource('route');
+                            }
+
+                            map.addSource('route', {
+                                type: 'geojson',
+                                data: {
                                     type: 'Feature',
                                     properties: {},
                                     geometry: route
-                                });
-                            } else {
-                                map.addSource('route', {
-                                    type: 'geojson',
-                                    data: {
-                                        type: 'Feature',
-                                        properties: {},
-                                        geometry: route
-                                    }
-                                });
+                                }
+                            });
 
-                                map.addLayer({
-                                    id: 'route',
-                                    type: 'line',
-                                    source: 'route',
-                                    layout: {
-                                        'line-join': 'round',
-                                        'line-cap': 'round'
-                                    },
-                                    paint: {
-                                        'line-color': '#111111',
-                                        'line-width': 4,
-                                        'line-opacity': 0.8
-                                    }
-                                });
-                            }
-                        });
+                            map.addLayer({
+                                id: 'route',
+                                type: 'line',
+                                source: 'route',
+                                layout: {
+                                    'line-join': 'round',
+                                    'line-cap': 'round'
+                                },
+                                paint: {
+                                    'line-color': '#111111',
+                                    'line-width': 4,
+                                    'line-opacity': 0.8
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error fetching route:", error);
                     }
-                } catch (error) {
-                    console.error("Error fetching route:", error);
+                };
+
+                // Check if map is already loaded
+                if (map.loaded()) {
+                    addRoute();
+                } else {
+                    map.on('load', addRoute);
                 }
             }
         };
