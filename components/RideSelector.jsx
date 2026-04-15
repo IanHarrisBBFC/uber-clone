@@ -2,9 +2,16 @@ import React, { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 import { carList } from "./data/data";
 
-export default function RideSelector({ pickup, dropoff }) {
+export default function RideSelector({ pickup, dropoff, onSelect }) {
   const [rideDuration, setRideDuration] = useState(0);
   const [selectedCar, setSelectedCar] = useState(null);
+
+  const formatPrice = (duration, multiplier) => {
+    const basePrice = 25;
+    const perMinuteRate = 0.5;
+    const price = basePrice + (duration * perMinuteRate * multiplier);
+    return price.toFixed(2);
+  };
 
   useEffect(() => {
     const hasValidPickup = pickup && pickup.length === 2 && pickup[0] !== 0 && pickup[1] !== 0;
@@ -28,13 +35,6 @@ export default function RideSelector({ pickup, dropoff }) {
 
     fetchDirections();
   }, [pickup, dropoff]);
-
-  const formatPrice = (duration, multiplier) => {
-    const basePrice = 25;
-    const perMinuteRate = 0.5;
-    const price = basePrice + (duration * perMinuteRate * multiplier);
-    return price.toFixed(2);
-  };
 
   const formatDuration = (minutes) => {
     if (minutes < 60) return `${Math.round(minutes)} min`;
@@ -64,7 +64,16 @@ export default function RideSelector({ pickup, dropoff }) {
           <CarCard
             key={index}
             $selected={selectedCar === index}
-            onClick={() => setSelectedCar(index)}
+            onClick={() => {
+              setSelectedCar(index);
+              if (onSelect) {
+                onSelect({
+                  vehicle: car,
+                  price: formatPrice(rideDuration, car.multiplier),
+                  duration: rideDuration
+                });
+              }
+            }}
           >
             <CarImageContainer>
               <CarImage src={car.imgUrl} alt={car.service} />
