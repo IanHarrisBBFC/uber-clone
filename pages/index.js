@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
+import FlightIntelligence from "../components/FlightIntelligence";
 
 const UK_AIRPORTS = [
   { code: "BHX", name: "Birmingham Airport" },
@@ -42,6 +43,7 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [passengers, setPassengers] = useState("1");
   const [luggage, setLuggage] = useState("1");
+  const [flightInfo, setFlightInfo] = useState(null);
   const router = useRouter();
 
   // Address autocomplete using Mapbox
@@ -109,6 +111,7 @@ export default function Home() {
         time: collectionTime,
         passengers,
         luggage,
+        flightInfo: flightInfo ? JSON.stringify(flightInfo) : null,
       },
     });
   };
@@ -304,6 +307,16 @@ export default function Home() {
                     </select>
                   </div>
                 </div>
+
+                <FlightIntelligence 
+                  onFlightData={setFlightInfo}
+                  collectionDate={collectionDate}
+                  collectionTime={collectionTime}
+                  onDateTimeChange={(date, time) => {
+                    setCollectionDate(date);
+                    setCollectionTime(time);
+                  }}
+                />
 
                 <button
                   onClick={handleGetQuote}

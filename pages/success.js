@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function Success() {
   const router = useRouter();
-  const { pickup, dropoff, vehicle, price } = router.query;
+  const { pickup, dropoff, vehicle, price, flightNumber, airline, arrivalTime, returnFlightNumber, returnAirline, departureTime } = router.query;
   const [bookingRef, setBookingRef] = useState("");
   const [saved, setSaved] = useState(false);
 
@@ -80,6 +80,30 @@ export default function Success() {
               <DetailLabel>Drop-off</DetailLabel>
               <DetailValue>{dropoff || "Airport"}</DetailValue>
             </DetailRow>
+            {flightNumber && (
+              <>
+                <DetailRow>
+                  <DetailLabel>Flight</DetailLabel>
+                  <DetailValue>{airline} {flightNumber}</DetailValue>
+                </DetailRow>
+                <DetailRow>
+                  <DetailLabel>Arrival</DetailLabel>
+                  <DetailValue>{new Date(arrivalTime).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</DetailValue>
+                </DetailRow>
+              </>
+            )}
+            {returnFlightNumber && (
+              <>
+                <DetailRow>
+                  <DetailLabel>Return Flight</DetailLabel>
+                  <DetailValue>{returnAirline} {returnFlightNumber}</DetailValue>
+                </DetailRow>
+                <DetailRow>
+                  <DetailLabel>Departure</DetailLabel>
+                  <DetailValue>{new Date(departureTime).toLocaleString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</DetailValue>
+                </DetailRow>
+              </>
+            )}
             <DetailRow className="border-t pt-3 mt-3">
               <DetailLabel className="font-bold">Total</DetailLabel>
               <DetailValue className="text-xl font-bold text-brand-black">£{price || "0.00"}</DetailValue>
