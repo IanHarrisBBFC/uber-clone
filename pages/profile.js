@@ -43,7 +43,11 @@ export default function ProfilePage() {
   };
 
   if (loading) {
-    return <Wrapper><Container><p className="text-center py-8">Loading...</p></Container></Wrapper>;
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <p className="text-center py-8">Loading...</p>
+      </div>
+    );
   }
 
   if (!user) return null;
