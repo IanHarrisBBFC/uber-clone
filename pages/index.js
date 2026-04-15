@@ -46,7 +46,7 @@ export default function Home() {
 
   // Address autocomplete using Mapbox
   const searchPlaces = useCallback(async (query) => {
-    if (!query || query.length < 3) {
+    if (!query || query.length < 2) {
       setPickupSuggestions([]);
       return;
     }
@@ -57,16 +57,17 @@ export default function Home() {
           new URLSearchParams({
             access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
             limit: 5,
-            types: "place,address,poi",
             country: "GB",
           })
       );
       const data = await response.json();
-      if (data.features) {
+      if (data.features && data.features.length > 0) {
         setPickupSuggestions(data.features.map((f) => f.place_name));
+      } else {
+        setPickupSuggestions([]);
       }
     } catch (error) {
-      console.error("Error fetching suggestions:", error);
+      console.error("Error fetching address suggestions:", error);
     }
   }, []);
 
@@ -75,7 +76,7 @@ export default function Home() {
       if (showSuggestions) {
         searchPlaces(pickup);
       }
-    }, 300);
+    }, 150);
     return () => clearTimeout(debounce);
   }, [pickup, showSuggestions, searchPlaces]);
 

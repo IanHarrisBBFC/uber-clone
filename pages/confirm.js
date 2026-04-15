@@ -12,8 +12,10 @@ export default function Confirm() {
   const [pickupCoordinates, setPickupCoordinates] = useState([0, 0]);
   const [dropoffCoordinates, setDropoffCoordinates] = useState([0, 0]);
 
-  const getCoordinates = async (location, setCoordinates) => {
+  const getCoordinates = async (location, setCoordinates, label) => {
     if (!location) return;
+
+    console.log("[v0] Getting coordinates for", label, ":", location);
 
     try {
       const response = await fetch(
@@ -21,20 +23,28 @@ export default function Confirm() {
           new URLSearchParams({
             access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
             limit: 1,
+            country: "GB",
           })
       );
       const data = await response.json();
+      console.log("[v0]", label, "geocode response:", data);
+      
       if (data.features && data.features.length > 0) {
-        setCoordinates(data.features[0].center);
+        const coords = data.features[0].center;
+        console.log("[v0]", label, "coordinates:", coords);
+        setCoordinates(coords);
+      } else {
+        console.log("[v0] No coordinates found for", label);
       }
     } catch (error) {
-      console.error("Error fetching coordinates:", error);
+      console.error("[v0] Error fetching coordinates:", error);
     }
   };
 
   useEffect(() => {
-    if (pickup) getCoordinates(pickup, setPickupCoordinates);
-    if (dropoff) getCoordinates(dropoff, setDropoffCoordinates);
+    console.log("[v0] Confirm page loaded with pickup:", pickup, "dropoff:", dropoff);
+    if (pickup) getCoordinates(pickup, setPickupCoordinates, "pickup");
+    if (dropoff) getCoordinates(dropoff, setDropoffCoordinates, "dropoff");
   }, [pickup, dropoff]);
 
   return (
