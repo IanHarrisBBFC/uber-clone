@@ -180,8 +180,8 @@ export default function Home() {
               <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
                 alt="CabnFly"
-                width={48}
-                height={48}
+                width={80}
+                height={80}
               />
             </div>
             <div className="flex items-center gap-4">
@@ -440,10 +440,12 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-[#111111] text-white py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <img
+          <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
             alt="CabnFly"
-            className="h-16 mx-auto mb-4"
+            width={64}
+            height={64}
+            className="mx-auto mb-4"
           />
           <p className="text-white">Your Premier Airport Transfer Service</p>
           <p className="text-sm text-gray-400 mt-4">CabnFly - All Rights Reserved</p>
