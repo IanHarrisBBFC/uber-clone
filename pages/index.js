@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
@@ -38,9 +38,46 @@ export default function Home() {
   const [collectionDate, setCollectionDate] = useState("");
   const [collectionTime, setCollectionTime] = useState("");
   const [pickup, setPickup] = useState("");
+  const [pickupSuggestions, setPickupSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [passengers, setPassengers] = useState("1");
   const [luggage, setLuggage] = useState("1");
   const router = useRouter();
+
+  // Address autocomplete using Mapbox
+  const searchPlaces = useCallback(async (query) => {
+    if (!query || query.length < 3) {
+      setPickupSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+          new URLSearchParams({
+            access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
+            limit: 5,
+            types: "place,address,poi",
+            country: "GB",
+          })
+      );
+      const data = await response.json();
+      if (data.features) {
+        setPickupSuggestions(data.features.map((f) => f.place_name));
+      }
+    } catch (error) {
+      console.error("Error fetching suggestions:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (showSuggestions) {
+        searchPlaces(pickup);
+      }
+    }, 300);
+    return () => clearTimeout(debounce);
+  }, [pickup, showSuggestions, searchPlaces]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -185,15 +222,34 @@ export default function Home() {
                   </select>
                 </div>
 
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Address</label>
                   <input
                     type="text"
                     value={pickup}
                     onChange={(e) => setPickup(e.target.value)}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                     placeholder="Enter your pickup address"
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#111111] focus:border-transparent"
                   />
+                  {showSuggestions && pickupSuggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 bg-white shadow-lg rounded-lg z-30 max-h-48 overflow-y-auto border border-gray-200">
+                      {pickupSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="px-4 py-3 cursor-pointer hover:bg-gray-100 text-sm border-b border-gray-100 last:border-b-0"
+                          onClick={() => {
+                            setPickup(suggestion);
+                            setPickupSuggestions([]);
+                            setShowSuggestions(false);
+                          }}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
