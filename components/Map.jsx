@@ -81,7 +81,7 @@ export default function Map({ pickup, dropoff }) {
                                 source: 'route',
                                 layout: { 'line-join': 'round', 'line-cap': 'round' },
                                 paint: {
-                                    'line-color': '#FFD700',
+                                    'line-color': '#0066FF',
                                     'line-width': 5,
                                     'line-opacity': 0.9
                                 }
