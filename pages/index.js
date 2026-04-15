@@ -159,7 +159,7 @@ export default function Home() {
               <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
                 Your Premier Airport Transfer Service
               </h1>
-              <p className="text-lg text-gray-200 mb-6">
+              <p className="text-lg text-white mb-6">
                 At CabnFly, we offer private hire taxi services from anywhere in the UK to all major airports, ensuring you reach your destination comfortably, on time, and at the best price.
               </p>
             </div>
