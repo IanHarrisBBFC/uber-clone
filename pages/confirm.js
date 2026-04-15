@@ -4,9 +4,6 @@ import Map from "../components/Map";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import RideSelector from "../components/RideSelector";
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Confirm() {
   const router = useRouter();
@@ -26,35 +23,20 @@ export default function Confirm() {
     setIsBooking(true);
     
     try {
-      // Create Stripe checkout session
-      const response = await fetch('/api/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: Math.round(parseFloat(selectedRide.price) * 100),
-          rideDetails: {
-            pickup,
-            dropoff,
-            vehicle: selectedRide.vehicle.service,
-            price: selectedRide.price
-          }
-        })
+      // Navigate to success page with booking details
+      // In production, this would process Stripe payment first
+      router.push({
+        pathname: '/success',
+        query: {
+          pickup,
+          dropoff,
+          vehicle: selectedRide.vehicle.service,
+          price: selectedRide.price
+        }
       });
-
-      const { sessionId } = await response.json();
-      
-      // Redirect to Stripe checkout
-      const stripe = await stripePromise;
-      const result = await stripe.redirectToCheckout({
-        sessionId: sessionId
-      });
-
-      if (result.error) {
-        console.error('Stripe error:', result.error);
-        setIsBooking(false);
-      }
     } catch (error) {
-      console.error('Booking error:', error);
+      console.error('[v0] Booking error:', error);
+      alert('Error processing booking: ' + error.message);
       setIsBooking(false);
     }
   };
