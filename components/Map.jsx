@@ -28,9 +28,21 @@ export default function Map({ pickup, dropoff }) {
                 new mapboxgl.Marker().setLngLat(coordinates).addTo(map);
             };
 
-            // Check if pickup has valid coordinates (not [0,0] and not empty)
-            const hasValidPickup = pickup && pickup.length === 2 && pickup[0] !== 0 && pickup[1] !== 0;
-            const hasValidDropoff = dropoff && dropoff.length === 2 && dropoff[0] !== 0 && dropoff[1] !== 0;
+            // Check if coordinates are valid numbers (not NaN, not 0, not undefined)
+            const isValidCoord = (coord) => {
+                return coord && 
+                       Array.isArray(coord) && 
+                       coord.length === 2 && 
+                       typeof coord[0] === 'number' && 
+                       typeof coord[1] === 'number' && 
+                       !isNaN(coord[0]) && 
+                       !isNaN(coord[1]) &&
+                       coord[0] !== 0 && 
+                       coord[1] !== 0;
+            };
+            
+            const hasValidPickup = isValidCoord(pickup);
+            const hasValidDropoff = isValidCoord(dropoff);
 
             if (hasValidPickup) {
                 addMarker(pickup);
