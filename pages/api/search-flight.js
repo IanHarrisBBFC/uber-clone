@@ -11,10 +11,26 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Flight number required' });
     }
 
+    // Check if API key is set
+    if (!process.env.AVIATIONSTACK_API_KEY) {
+      console.error('[v0] AVIATIONSTACK_API_KEY not set');
+      return res.status(500).json({ 
+        error: 'Flight lookup service not configured. Please add AVIATIONSTACK_API_KEY to environment variables.',
+        isConfigError: true 
+      });
+    }
+
     // Search flight using AviationStack API
-    const response = await fetch(
-      `http://api.aviationstack.com/v1/flights?access_key=${process.env.AVIATIONSTACK_API_KEY}&flight_iata=${flightNumber.toUpperCase()}&date=${date}`
-    );
+    const url = `https://api.aviationstack.com/v1/flights?access_key=${process.env.AVIATIONSTACK_API_KEY}&flight_iata=${flightNumber.toUpperCase()}&date=${date}`;
+    
+    const response = await fetch(url, { 
+      timeout: 5000 
+    });
+
+    if (!response.ok) {
+      console.error(`[v0] AviationStack API error: ${response.status}`);
+      return res.status(response.status).json({ error: 'Failed to fetch flight data from AviationStack' });
+    }
 
     const data = await response.json();
 
@@ -46,8 +62,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json(flightInfo);
   } catch (error) {
-    console.error('Flight search error:', error);
-    return res.status(500).json({ error: 'Failed to search flight' });
+    console.error('[v0] Flight search error:', error);
+    return res.status(500).json({ error: 'Failed to search flight: ' + error.message });
   }
 }
 
