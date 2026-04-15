@@ -72,42 +72,41 @@ export default function Confirm() {
         </RoutePoint>
       </RouteSummary>
 
-      {/* Map */}
-      <MapContainer>
-        <Map pickup={pickupCoordinates} dropoff={dropoffCoordinates} />
-      </MapContainer>
+      {/* Main content: map left, vehicles right */}
+      <MainContent>
+        {/* Left: Map */}
+        <MapContainer>
+          <Map pickup={pickupCoordinates} dropoff={dropoffCoordinates} />
+        </MapContainer>
 
-      {/* Ride Selector */}
-      <RideContainer>
-        <RideSelector pickup={pickupCoordinates} dropoff={dropoffCoordinates} />
-        
-        {/* Confirm Button */}
-        <ConfirmButtonContainer>
-          <ConfirmButton>
-            <ButtonContent>
-              <ButtonIcon>
+        {/* Right: Ride Selector + Confirm */}
+        <RideContainer>
+          <RideSelector pickup={pickupCoordinates} dropoff={dropoffCoordinates} />
+          <ConfirmButtonContainer>
+            <ConfirmButton>
+              <ButtonContent>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </ButtonIcon>
-              Confirm Booking
-            </ButtonContent>
-          </ConfirmButton>
-          <SecureText>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-            </svg>
-            Secure payment with Stripe
-          </SecureText>
-        </ConfirmButtonContainer>
-      </RideContainer>
+                Confirm Booking
+              </ButtonContent>
+            </ConfirmButton>
+            <SecureText>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+              Secure payment with Stripe
+            </SecureText>
+          </ConfirmButtonContainer>
+        </RideContainer>
+      </MainContent>
     </Wrapper>
   );
 }
 
 // Styled components
 const Wrapper = tw.div`
-  flex h-screen flex-col bg-gray-100
+  flex h-screen flex-col bg-gray-100 overflow-hidden
 `;
 
 const HeaderBar = tw.header`
@@ -154,12 +153,16 @@ const RouteAddress = tw.p`
   text-sm font-medium text-gray-800 truncate
 `;
 
+const MainContent = tw.div`
+  flex flex-1 overflow-hidden
+`;
+
 const MapContainer = tw.div`
-  h-48 relative
+  flex-1 relative
 `;
 
 const RideContainer = tw.div`
-  flex-1 flex flex-col overflow-hidden
+  w-full md:w-96 lg:w-[420px] flex flex-col overflow-hidden bg-gray-50 border-l border-gray-200
 `;
 
 const ConfirmButtonContainer = tw.div`
@@ -175,9 +178,6 @@ const ButtonContent = tw.span`
   flex items-center justify-center gap-2
 `;
 
-const ButtonIcon = tw.span`
-  w-5 h-5
-`;
 
 const SecureText = tw.p`
   flex items-center justify-center gap-1 text-xs text-gray-500 mt-2
