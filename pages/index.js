@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import FlightIntelligence from "../components/FlightIntelligence";
@@ -163,9 +164,10 @@ export default function Home() {
       {/* Hero Section with Booking Form */}
       <section className="relative">
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Screenshot_78.png-n9Q46lv7qR4bHXYH92ycGu8e2yskU8.jpeg"
             alt="Premium Mercedes Taxi"
+            fill
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-[#111111]/80 to-[#111111]/50"></div>
@@ -175,18 +177,21 @@ export default function Home() {
         <header className="relative z-20">
           <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div className="flex items-center">
-              <img
+              <Image
                 src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/P9Su0EpSKC5T-ppi2ulQXwOYJWoe3KQ17gmGKNpGS25.png"
                 alt="CabnFly"
-                className="h-12"
+                width={48}
+                height={48}
               />
             </div>
             <div className="flex items-center gap-4">
               <span className="hidden sm:block text-sm text-white">{user?.name}</span>
-              <img
-                src={user?.photoUrl}
+              <Image
+                src={user?.photoUrl || '/default-profile.png'}
                 alt="Profile"
-                className="h-10 w-10 rounded-full border-2 border-white cursor-pointer hover:opacity-80"
+                width={40}
+                height={40}
+                className="rounded-full border-2 border-white cursor-pointer hover:opacity-80"
                 onClick={() => signOut(auth)}
               />
             </div>
@@ -338,9 +343,10 @@ export default function Home() {
             {services.map((service, idx) => (
               <div key={idx} className="rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition group">
                 <div className="relative h-52 overflow-hidden">
-                  <img
+                  <Image
                     src={service.image}
                     alt={service.title}
+                    fill
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-[#111111]/40"></div>
@@ -390,11 +396,14 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {fleet.map((vehicle, idx) => (
               <div key={idx} className="bg-gray-50 rounded-xl p-4 text-center hover:shadow-lg transition">
-                <img
-                  src={vehicle.image}
-                  alt={vehicle.name}
-                  className="h-24 w-full object-contain mb-4"
-                />
+                <div className="relative h-24 w-full mb-4">
+                  <Image
+                    src={vehicle.image}
+                    alt={vehicle.name}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
                 <h3 className="font-bold text-[#111111]">{vehicle.name}</h3>
                 <p className="text-sm text-gray-600">{vehicle.passengers} PERSON</p>
               </div>
@@ -410,11 +419,14 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-8">
             {airports.map((airport, idx) => (
               <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition">
-                <img
-                  src={airport.image}
-                  alt={airport.name}
-                  className="w-full h-48 object-cover"
-                />
+                <div className="relative h-48 w-full">
+                  <Image
+                    src={airport.image}
+                    alt={airport.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-[#111111] mb-2">{airport.name}</h3>
                   <p className="text-gray-600">{airport.desc}</p>
