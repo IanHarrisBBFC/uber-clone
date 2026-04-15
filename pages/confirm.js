@@ -7,12 +7,23 @@ import RideSelector from "../components/RideSelector";
 
 export default function Confirm() {
   const router = useRouter();
-  const { pickup, dropoff } = router.query;
+  const { pickup, dropoff, flightInfo } = router.query;
 
   const [pickupCoordinates, setPickupCoordinates] = useState(null);
   const [dropoffCoordinates, setDropoffCoordinates] = useState(null);
   const [selectedRide, setSelectedRide] = useState(null);
   const [isBooking, setIsBooking] = useState(false);
+  const [flight, setFlight] = useState(null);
+
+  useEffect(() => {
+    if (flightInfo) {
+      try {
+        setFlight(JSON.parse(flightInfo));
+      } catch (error) {
+        console.error('Error parsing flight info:', error);
+      }
+    }
+  }, [flightInfo]);
 
   const handleConfirmBooking = async () => {
     if (!selectedRide) {
@@ -25,14 +36,28 @@ export default function Confirm() {
     try {
       // Navigate to success page with booking details
       // In production, this would process Stripe payment first
+      const queryParams = {
+        pickup,
+        dropoff,
+        vehicle: selectedRide.vehicle.service,
+        price: selectedRide.price
+      };
+
+      if (flight?.outbound) {
+        queryParams.flightNumber = flight.outbound.flightNumber;
+        queryParams.airline = flight.outbound.airline;
+        queryParams.arrivalTime = flight.outbound.arrival.time;
+      }
+
+      if (flight?.return) {
+        queryParams.returnFlightNumber = flight.return.flightNumber;
+        queryParams.returnAirline = flight.return.airline;
+        queryParams.departureTime = flight.return.departure.time;
+      }
+
       router.push({
         pathname: '/success',
-        query: {
-          pickup,
-          dropoff,
-          vehicle: selectedRide.vehicle.service,
-          price: selectedRide.price
-        }
+        query: queryParams
       });
     } catch (error) {
       console.error('[v0] Booking error:', error);
