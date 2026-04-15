@@ -46,27 +46,41 @@ export default function Home() {
 
   // Address autocomplete using Mapbox
   const searchPlaces = useCallback(async (query) => {
+    console.log("[v0] searchPlaces called with query:", query);
+    console.log("[v0] Mapbox token:", process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ? "exists" : "MISSING");
+    
     if (!query || query.length < 3) {
+      console.log("[v0] Query too short, clearing suggestions");
       setPickupSuggestions([]);
       return;
     }
 
     try {
-      const response = await fetch(
-        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
-          new URLSearchParams({
-            access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
-            limit: 5,
-            types: "place,address,poi",
-            country: "GB",
-          })
-      );
+      const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?` +
+        new URLSearchParams({
+          access_token: process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN,
+          limit: 5,
+          types: "place,address,poi",
+          country: "GB",
+        });
+      console.log("[v0] Fetching:", url.substring(0, 80) + "...");
+      
+      const response = await fetch(url);
+      console.log("[v0] Response status:", response.status);
+      
       const data = await response.json();
-      if (data.features) {
-        setPickupSuggestions(data.features.map((f) => f.place_name));
+      console.log("[v0] Response data:", data);
+      
+      if (data.features && data.features.length > 0) {
+        const suggestions = data.features.map((f) => f.place_name);
+        console.log("[v0] Setting suggestions:", suggestions);
+        setPickupSuggestions(suggestions);
+      } else {
+        console.log("[v0] No features found in response");
+        setPickupSuggestions([]);
       }
     } catch (error) {
-      console.error("Error fetching suggestions:", error);
+      console.error("[v0] Error fetching suggestions:", error);
     }
   }, []);
 
